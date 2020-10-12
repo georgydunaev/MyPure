@@ -29,12 +29,12 @@ class "term"
 default_sort \<open>term\<close>
 
 typedecl o
+typedecl i
 
 
-(*
 judgment
   Trueprop :: \<open>o \<Rightarrow> prop\<close>  (\<open>(_)\<close> 5)
-*)
+
 
 
 (*
@@ -73,9 +73,9 @@ axiomatization
 
 axiomatization
   empctx :: \<open>ctx\<close> (\<open>*\<close>)and
-  addctx :: \<open>[ctx, o] \<Rightarrow> ctx\<close> (infixl \<open>,\<close> 38) and
-  deriv :: \<open>[ctx, o] \<Rightarrow> prop\<close> (infixr \<open>\<turnstile>\<close> 37) and
-  metaimp :: \<open>[prop, prop] => prop\<close>  (infixr \<open>\<leadsto>\<close> 36)
+  addctx :: \<open>[ctx, o] \<Rightarrow> ctx\<close> (infixl \<open>,\<close> 24) and
+  deriv :: \<open>[ctx, o] \<Rightarrow> prop\<close> (infixr \<open>\<turnstile>\<close> 23)
+(* and  metaimp :: \<open>[prop, prop] => prop\<close>  (infixr \<open>\<leadsto>\<close> 36) *)
 
 (*
 judgment
@@ -93,11 +93,20 @@ axiomatization
 (* MA2 similarly *)
   MMP : \<open>\<lbrakk>(G \<turnstile> A) \<leadsto> (G \<turnstile> B); G \<turnstile> A\<rbrakk> \<Longrightarrow> G \<turnstile> B\<close>
 *)
+axiomatization
+  All :: \<open>(i \<Rightarrow> o) \<Rightarrow> o\<close>  (binder \<open>\<forall>\<close> 10) and
+  Ex :: \<open>(i \<Rightarrow> o) \<Rightarrow> o\<close>  (binder \<open>\<exists>\<close> 10) (* 'a *)
+where
+  spec: \<open>G \<turnstile> (\<forall>x. R(x)) \<longrightarrow> R(t)\<close>
+
+lemma 
+
 
 axiomatization
   where
   hyp: \<open>G, P \<turnstile> P\<close> and
   weak: \<open>(G \<turnstile> P) \<Longrightarrow> (G, A \<turnstile> P)\<close> and
+(*  spec: \<open>G \<turnstile> ((\<forall>x::i. ((P::"i\<Rightarrow>o") x)) \<longrightarrow> (P (t::i)))\<close> and*)
   mp: \<open>\<lbrakk>(G \<turnstile> (P \<longrightarrow> Q)); (G \<turnstile> P)\<rbrakk> \<Longrightarrow> (G \<turnstile> Q)\<close> and
   ded: \<open>(G, P \<turnstile> Q) \<Longrightarrow> (G \<turnstile> (P \<longrightarrow> Q))\<close>
 
