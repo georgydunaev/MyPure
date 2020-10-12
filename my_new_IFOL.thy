@@ -73,8 +73,8 @@ axiomatization
 
 axiomatization
   empctx :: \<open>ctx\<close> (\<open>*\<close>)and
-  addctx :: \<open>[ctx, o] \<Rightarrow> ctx\<close> (infixl \<open>,\<close> 24) and
-  deriv :: \<open>[ctx, o] \<Rightarrow> prop\<close> (infixr \<open>\<turnstile>\<close> 23)
+  addctx :: \<open>[ctx, o] \<Rightarrow> ctx\<close> (infixl \<open>,\<close> 9) and
+  deriv :: \<open>[ctx, o] \<Rightarrow> prop\<close> (infixr \<open>\<turnstile>\<close> 8)
 (* and  metaimp :: \<open>[prop, prop] => prop\<close>  (infixr \<open>\<leadsto>\<close> 36) *)
 
 (*
@@ -97,10 +97,8 @@ axiomatization
   All :: \<open>(i \<Rightarrow> o) \<Rightarrow> o\<close>  (binder \<open>\<forall>\<close> 10) and
   Ex :: \<open>(i \<Rightarrow> o) \<Rightarrow> o\<close>  (binder \<open>\<exists>\<close> 10) (* 'a *)
 where
-  spec: \<open>G \<turnstile> (\<forall>x. R(x)) \<longrightarrow> R(t)\<close>
-
-lemma 
-
+  spec: \<open>G \<turnstile> (\<forall>x. R(x)) \<longrightarrow> R(t)\<close> and
+  gen: \<open>\<lbrakk>G \<turnstile> R(x)\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close> (* sic! *)
 
 axiomatization
   where
@@ -108,7 +106,22 @@ axiomatization
   weak: \<open>(G \<turnstile> P) \<Longrightarrow> (G, A \<turnstile> P)\<close> and
 (*  spec: \<open>G \<turnstile> ((\<forall>x::i. ((P::"i\<Rightarrow>o") x)) \<longrightarrow> (P (t::i)))\<close> and*)
   mp: \<open>\<lbrakk>(G \<turnstile> (P \<longrightarrow> Q)); (G \<turnstile> P)\<rbrakk> \<Longrightarrow> (G \<turnstile> Q)\<close> and
+  mp_rev: \<open>\<lbrakk>(G \<turnstile> P); (G \<turnstile> (P \<longrightarrow> Q))\<rbrakk> \<Longrightarrow> (G \<turnstile> Q)\<close> and
   ded: \<open>(G, P \<turnstile> Q) \<Longrightarrow> (G \<turnstile> (P \<longrightarrow> Q))\<close>
+
+(* Checked!
+axiomatization
+  noteq :: \<open>i \<Rightarrow> i \<Rightarrow> o\<close>  (infixr \<open>\<noteq>\<close> 10)
+
+lemma fkt: "G \<turnstile> (\<forall>x. \<exists>y. x\<noteq>y)"
+  sorry
+
+lemma bad: "G \<turnstile> (\<exists>y. y\<noteq>y)"
+  apply (rule mp_rev)
+  apply (rule fkt)
+  apply (rule spec) 
+  sorry
+*)
 
 lemma firstthm: \<open>*, A, B \<turnstile> B\<close>
   by (rule hyp)
