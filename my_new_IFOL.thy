@@ -101,10 +101,22 @@ axiomatization
 (* MA2 similarly *)
   MMP : \<open>\<lbrakk>(G \<turnstile> A) \<leadsto> (G \<turnstile> B); G \<turnstile> A\<rbrakk> \<Longrightarrow> G \<turnstile> B\<close>
 *)
+
+typedecl var
+
+axiomatization
+  interpr :: \<open>var \<Rightarrow> i\<close> (\<open>\<bottom>\<close>)
+
+axiomatization
+  ZF :: \<open>ctx\<close>
+
+axiomatization
+  FV :: \<open>ctx \<Rightarrow> i\<close>
+
 axiomatization
   IN :: \<open>i \<Rightarrow> i \<Rightarrow> o\<close>  (infixr \<open>\<in>\<close> 10)
 
-definition NotIN (\<open>_ \<notin> _\<close> ) (* [40] 40 *)
+definition NotIN (\<open>_ \<notin> _\<close> 40) (* [40] 40 *)
   where notin_def: \<open>x \<notin> y \<equiv> \<not>(x \<in> y)\<close>  
 
 (*
@@ -119,7 +131,10 @@ axiomatization
   Ex :: \<open>(i \<Rightarrow> o) \<Rightarrow> o\<close>  (binder \<open>\<exists>\<close> 10) (* 'a *)
 where
   spec: \<open>G \<turnstile> (\<forall>x. R(x)) \<longrightarrow> R(t)\<close> and
-  gen: \<open>\<lbrakk>G \<turnstile> R(x); ZF \<turnstile> x \<notin> x\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close>  (* sic! *)
+  gen: \<open>\<lbrakk>\<And>x. G \<turnstile> R(x)\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close>
+(*  gen: \<open>\<lbrakk>G \<turnstile> R(x); ZF \<turnstile> x \<notin> FV(G)\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close>  (* sic! *) *)
+(* here we imply that VARIABLES and SETS are the same entity. 
+Can we do so? *)
 (*  gen: \<open>\<lbrakk>G \<turnstile> R(x); ZF \<turnstile> x\<notin>FV(G)\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close>  (* sic! *) *)
 
 axiomatization
@@ -132,8 +147,9 @@ axiomatization
   ded: \<open>(G, P \<turnstile> Q) \<Longrightarrow> (G \<turnstile> (P \<longrightarrow> Q))\<close>
 
 
-lemma bad2: \<open>(G, (\<exists>y. y\<in>x)) \<turnstile> (\<forall>x. \<exists>y. y\<in>x)\<close>
-  apply (rule gen, rule hyp)
+lemma bad2: \<open>(*, (\<exists>y. y\<in>x)) \<turnstile> (\<forall>x. \<exists>y. y\<in>x)\<close>
+  apply (rule gen)
+  apply (rule hyp)
   done
 
 (* Checked!
