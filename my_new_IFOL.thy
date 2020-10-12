@@ -35,8 +35,6 @@ typedecl i
 judgment
   Trueprop :: \<open>o \<Rightarrow> prop\<close>  (\<open>(_)\<close> 5)
 
-
-
 (*
 datatype 'a list =
     Nil    ("[]")
@@ -51,7 +49,11 @@ translations
   "[x]" == "x#[]"
 *)
 typedecl ctx
-typedecl myprop
+
+judgment
+  Truectx :: \<open>prop \<Rightarrow> ctx\<close>  (\<open>(_)\<close> 4)
+
+(*typedecl myprop *)
 
 subsubsection \<open>Equality\<close>
 
@@ -66,10 +68,16 @@ where
 subsubsection \<open>Propositional logic\<close>
 
 axiomatization
-  False :: \<open>o\<close> and
+  False :: \<open>o\<close> (\<open>\<bottom>\<close>) and
   conj :: \<open>[o, o] => o\<close>  (infixr \<open>\<and>\<close> 35) and
   disj :: \<open>[o, o] => o\<close>  (infixr \<open>\<or>\<close> 30) and
   imp :: \<open>[o, o] => o\<close>  (infixr \<open>\<longrightarrow>\<close> 25)
+
+definition Not (\<open>\<not> _\<close> [40] 40)
+  where not_def: \<open>\<not> P \<equiv> P \<longrightarrow> \<bottom>\<close>  
+
+definition True (\<open>\<top>\<close>)
+  where true_def \<open>True \<equiv> \<not>\<bottom>\<close> 
 
 axiomatization
   empctx :: \<open>ctx\<close> (\<open>*\<close>)and
@@ -94,11 +102,25 @@ axiomatization
   MMP : \<open>\<lbrakk>(G \<turnstile> A) \<leadsto> (G \<turnstile> B); G \<turnstile> A\<rbrakk> \<Longrightarrow> G \<turnstile> B\<close>
 *)
 axiomatization
+  IN :: \<open>i \<Rightarrow> i \<Rightarrow> o\<close>  (infixr \<open>\<in>\<close> 10)
+
+definition NotIN (\<open>_ \<notin> _\<close> ) (* [40] 40 *)
+  where notin_def: \<open>x \<notin> y \<equiv> \<not>(x \<in> y)\<close>  
+
+(*
+axiomatization
+ notinctx :: \<open>i\<Rightarrow>ctx\<Rightarrow>prop\<close> ( \<open>_ \<notin>FV(_)\<close> 8)
+where
+ ax1: \<open>x\<notin>FV(G)\<close>
+*)
+
+axiomatization
   All :: \<open>(i \<Rightarrow> o) \<Rightarrow> o\<close>  (binder \<open>\<forall>\<close> 10) and
   Ex :: \<open>(i \<Rightarrow> o) \<Rightarrow> o\<close>  (binder \<open>\<exists>\<close> 10) (* 'a *)
 where
   spec: \<open>G \<turnstile> (\<forall>x. R(x)) \<longrightarrow> R(t)\<close> and
-  gen: \<open>\<lbrakk>G \<turnstile> R(x)\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close> (* sic! *)
+  gen: \<open>\<lbrakk>G \<turnstile> R(x); ZF \<turnstile> x \<notin> x\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close>  (* sic! *)
+(*  gen: \<open>\<lbrakk>G \<turnstile> R(x); ZF \<turnstile> x\<notin>FV(G)\<rbrakk> \<Longrightarrow> G \<turnstile> \<forall>x. R(x)\<close>  (* sic! *) *)
 
 axiomatization
   where
@@ -108,6 +130,11 @@ axiomatization
   mp: \<open>\<lbrakk>(G \<turnstile> (P \<longrightarrow> Q)); (G \<turnstile> P)\<rbrakk> \<Longrightarrow> (G \<turnstile> Q)\<close> and
   mp_rev: \<open>\<lbrakk>(G \<turnstile> P); (G \<turnstile> (P \<longrightarrow> Q))\<rbrakk> \<Longrightarrow> (G \<turnstile> Q)\<close> and
   ded: \<open>(G, P \<turnstile> Q) \<Longrightarrow> (G \<turnstile> (P \<longrightarrow> Q))\<close>
+
+
+lemma bad2: \<open>(G, (\<exists>y. y\<in>x)) \<turnstile> (\<forall>x. \<exists>y. y\<in>x)\<close>
+  apply (rule gen, rule hyp)
+  done
 
 (* Checked!
 axiomatization
